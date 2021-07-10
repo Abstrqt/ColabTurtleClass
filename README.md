@@ -93,3 +93,8 @@ This module's API is mostly identical to the [ColabTurtle API](https://github.co
 `clear()` 
 `write(obj, align=, font=)`
 `shape(sh)`
+
+
+Credits
+----
+Tolga Atam - ColabTurtle 

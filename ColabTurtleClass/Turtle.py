@@ -1,3 +1,7 @@
+'''
+  Modified version of Tolga Atam's ColabTurtle library, MIT License
+  @link https://github.com/tolgaatam/ColabTurtle
+'''
 from IPython.display import display, HTML
 import time
 import math
