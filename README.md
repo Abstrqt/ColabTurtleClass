@@ -51,7 +51,7 @@ for x in range(3):
 
 This code ends up with the following drawing:
 
-![Example of two turtles](example.png?raw=true "Example Image")
+![Example of two turtles](https://github.com/Abstrqt/ColabTurtleClass/blob/main/example.PNG)
 
 
 API
