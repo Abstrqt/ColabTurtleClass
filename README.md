@@ -1,5 +1,21 @@
-Class Implementation for ColabTurtle
-===================
+<h1 align="center">ColabTurtleClass</h1>
+
+<p align="center">
+  <a href="https://github.com/Abstrqt/ColabTurtleClass/releases" target="_blank">
+    <img alt="Release" src="https://img.shields.io/github/v/release/abstrqt/colabturtleclass?color=56bcd3">   
+  </a>      
+  <a href="https://pypi.org/project/ColabTurtleClass/" target="_blank">
+    <img alt="Downloads" src="https://img.shields.io/pypi/dm/colabturtleclass?color=56bcd3">
+  </a>      
+  <a href="https://github.com/Abstrqt/ColabTurtleClass/blob/main/LICENSE" target="_blank">
+    <img alt="License" src="https://img.shields.io/pypi/l/colabturtleclass?color=56bcd3">
+  </a>      
+</p>
+
+Description
+----
+Class implementation of ColabTurtle by Tolga Atam. This library allows for multiple instances of turtles on one display. 
+
 
 Installation for Google Colab:
 ----
@@ -21,6 +37,8 @@ Create a Window object and turtle objects:
     window = Window()
     bob = Turtle(window)
     joe = Turtle(window)
+    
+Note that the constructor for the Window class takes one keyword argument `initial_window_size : tuple` and the constructor for the Turtle class takes one required argument `window : Window` and one keyword argument `initial_speed : int`. To have all turtles drawn on the same display, pass in the same Window object to each new Turtle object.
 
 Example
 ----
@@ -65,7 +83,6 @@ This module's API is mostly identical to the [ColabTurtle API](https://github.co
 `window_height()`
 
 ##### Turtle Class
-
 
 `forward(units) | fd(units)`
 `backward(units) | bk(units) | back(units)` 
