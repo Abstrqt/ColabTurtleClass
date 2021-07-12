@@ -6,6 +6,7 @@ from IPython.display import display, HTML
 import time
 import math
 import re
+import typing
 
 DEFAULT_WINDOW_SIZE = (800, 500)
 DEFAULT_SPEED = 4
@@ -44,12 +45,12 @@ SPEED_TO_SEC_MAP = {1: 1.5, 2: 0.9, 3: 0.7, 4: 0.5, 5: 0.3, 6: 0.18, 7: 0.12, 8:
 class Window:
 
     #Constructor
-    def __init__(self, initial_window_size=DEFAULT_WINDOW_SIZE):
-        if not (isinstance(initial_window_size, tuple) and len(initial_window_size) == 2 and isinstance(
-                initial_window_size[0], int) and isinstance(initial_window_size[1], int)):
+    def __init__(self, window_size : tuple = DEFAULT_WINDOW_SIZE):
+        if not (isinstance(window_size, tuple) and len(window_size) == 2 and isinstance(
+                window_size[0], int) and isinstance(window_size[1], int)):
             raise ValueError('window_size must be a tuple of 2 integers')
 
-        self.window_size = initial_window_size     
+        self.window_size = window_size     
         self.background_color = DEFAULT_BACKGROUND_COLOR
         self.turtles = []
         self.drawing_window = display(HTML(self._generateSvgDrawing()), display_id=True)
@@ -184,11 +185,11 @@ class Window:
 class Turtle:
     
     #Constructor
-    def __init__(self, window, initial_speed=DEFAULT_SPEED):
+    def __init__(self, window, speed : int = DEFAULT_SPEED, position : tuple = None):
     
-        if isinstance(initial_speed,int) == False or initial_speed not in range(1, 14):
+        if isinstance(speed,int) == False or speed not in range(1, 14):
             raise ValueError('initial_speed must be an integer in interval [1,13]')
-        self.turtle_speed = initial_speed
+        self.turtle_speed = speed
 
         self.is_turtle_visible = DEFAULT_TURTLE_VISIBILITY
         self.pen_color = DEFAULT_PEN_COLOR
@@ -200,7 +201,14 @@ class Turtle:
 
         if not isinstance(window, Window) == True:
             raise TypeError("window must be a window object")
-        self.turtle_pos = (window.window_size[0] // 2, window.window_size[1] // 2)            
+
+        if position is not None:
+            if not (isinstance(position, tuple) and len(position) == 2 and isinstance(position[0], int) and isinstance(position[1], int)):
+                raise ValueError('position must be a tuple of 2 integers')    
+            else:
+                self.turtle_pos = position     
+        else:
+            self.turtle_pos = (window.window_size[0] // 2, window.window_size[1] // 2)            
         self.drawing_window = window
         window.add(self)
 

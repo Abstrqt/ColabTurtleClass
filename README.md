@@ -38,7 +38,7 @@ Create a Window object and turtle objects:
     bob = Turtle(window)
     joe = Turtle(window)
     
-Note that the constructor for the Window class takes one keyword argument `initial_window_size : tuple` and the constructor for the Turtle class takes one required argument `window : Window` and one keyword argument `initial_speed : int`. To have all turtles drawn on the same display, pass in the same Window object to each new Turtle object.
+Note that the constructor for the Window class takes one keyword argument `window_size : tuple` and the constructor for the Turtle class takes one required argument `window : Window` and two keyword arguments `speed : int` and `position : tuple`. To have all turtles drawn on the same display, pass in the same Window object to each new Turtle object.
 
 Example
 ----
