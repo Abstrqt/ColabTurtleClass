@@ -105,16 +105,14 @@ class Window:
 
 
     # helper functions for updating the screen using the latest positions/angles/lines etc.
-    def _updateDrawing(self, turtle=None):
-        if turtle is None:
-            time.sleep(self._speedToSec(4))
-        else:
+    def _updateDrawing(self, turtle=None, delay=True):
+        if turtle is not None and delay == True:
             time.sleep(self._speedToSec(turtle.turtle_speed))
         self.drawing_window.update(HTML(self._generateSvgDrawing()))
 
 
     # helper function for managing any kind of move to a given 'new_pos' and draw lines if pen is down
-    def _moveToNewPosition(self, new_pos, turtle):
+    def _moveToNewPosition(self, new_pos, turtle, delay=True):
         # rounding the new_pos to eliminate floating point errors.
         new_pos = ( round(new_pos[0],3), round(new_pos[1],3) )
 
@@ -124,7 +122,7 @@ class Window:
                 x1=start_pos[0], y1=start_pos[1], x2=new_pos[0], y2=new_pos[1], pen_color=turtle.pen_color, pen_width=turtle.pen_width)
 
         turtle.turtle_pos = new_pos
-        self._updateDrawing(turtle)
+        self._updateDrawing(turtle=turtle, delay=delay)
 
     def _validateColorString(self, color):
         if color in VALID_COLORS_SET: # 140 predefined html color names
@@ -168,7 +166,7 @@ class Window:
             color = (color, c2, c3)
 
         self.background_color = self._processColor(color)
-        self._updateDrawing()        
+        self._updateDrawing(delay=False)        
 
     # return turtle window width
     def window_width(self):
@@ -180,7 +178,7 @@ class Window:
 
     def add(self, turtle):
         self.turtles.append(turtle)
-        self._updateDrawing()
+        self._updateDrawing(delay=False)
         
 class Turtle:
     
@@ -213,53 +211,53 @@ class Turtle:
         window.add(self)
 
     # makes the turtle move forward by 'units' units
-    def forward(self, units):
+    def forward(self, units, force = True):
         if not isinstance(units, (int,float)):
             raise ValueError('units must be a number.')
 
         alpha = math.radians(self.turtle_degree)
         ending_point = (self.turtle_pos[0] + units * math.cos(alpha), self.turtle_pos[1] + units * math.sin(alpha))
 
-        self.drawing_window._moveToNewPosition(ending_point, self)
+        self.drawing_window._moveToNewPosition(ending_point, self, delay = force)
 
     fd = forward # alias
 
     # makes the turtle move backward by 'units' units
-    def backward(self, units):
+    def backward(self, units, force = True):
         if not isinstance(units, (int,float)):
             raise ValueError('units must be a number.')
-        self.forward(-1 * units)
+        self.forward(-1 * units, force = force)
 
     bk = backward # alias
     back = backward # alias
 
 
     # makes the turtle move right by 'degrees' degrees (NOT radians)
-    def right(self, degrees):
+    def right(self, degrees, force = True):
         if not isinstance(degrees, (int,float)):
             raise ValueError('degrees must be a number.')
 
         self.turtle_degree = (self.turtle_degree + degrees) % 360
-        self.drawing_window._updateDrawing(self)
+        self.drawing_window._updateDrawing(turtle=self, delay=force)
 
     rt = right # alias
 
     # makes the turtle face a given direction
-    def face(self, degrees):
+    def face(self, degrees, force = True):
         if not isinstance(degrees, (int,float)):
             raise ValueError('degrees must be a number.')
 
         self.turtle_degree = degrees % 360
-        self.drawing_window._updateDrawing(self)
+        self.drawing_window._updateDrawing(turtle=self, delay=force)
 
     setheading = face # alias
     seth = face # alias
 
     # makes the turtle move right by 'degrees' degrees (NOT radians, this library does not support radians right now)
-    def left(self, degrees):
+    def left(self, degrees, force = True):
         if not isinstance(degrees, (int,float)):
             raise ValueError('degrees must be a number.')
-        self.right(-1 * degrees)
+        self.right(-1 * degrees, force = force)
 
     lt = left
 
@@ -296,28 +294,43 @@ class Turtle:
         # TODO: decide if we should put the timout after changing the speed
         # _updateDrawing()
 
+    # draw a circle using a given radius
+    def circle(self, radius, extent = 360, steps = None):
+        if steps is None:
+            frac = abs(extent)/360
+            steps = 1+int(min(11+abs(radius)/6.0, 59.0)*frac)   
+        w = 1.0 * extent / steps
+        w2 = 0.5 * w
+        l = 2.0 * radius * math.sin(math.radians(w2))   
+        if radius < 0:
+            l, w, w2 = -l, -w, -w2
+        self.left(w2, force=False)
+        for i in range(steps):
+            self.forward(l, force=False)
+            self.left(w, force=False)
+        self.left(-w2)                                  
 
     # move the turtle to a designated 'x' x-coordinate, y-coordinate stays the same
-    def setx(self, x):
+    def setx(self, x, force = True):
         if not isinstance(x, (int,float)):
             raise ValueError('new x position must be a number.')
         if x < 0:
             raise ValueError('new x position must be non-negative.')
-        self.drawing_window._moveToNewPosition((x, self.turtle_pos[1]), self)
+        self.drawing_window._moveToNewPosition((x, self.turtle_pos[1]), self, delay = force)
 
 
     # move the turtle to a designated 'y' y-coordinate, x-coordinate stays the same
-    def sety(self, y):
+    def sety(self, y, force = True):
         if not isinstance(y, (int,float)):
             raise ValueError('new y position must be a number.')
         if y < 0:
             raise ValueError('new y position must be non-negative.')
-        self.drawing_window._moveToNewPosition((self.turtle_pos[0], y), self)
+        self.drawing_window._moveToNewPosition((self.turtle_pos[0], y), self, delay = force)
 
 
-    def home(self):
+    def home(self, force = True):
         self.turtle_degree = DEFAULT_TURTLE_DEGREE
-        self.drawing_window._moveToNewPosition( (self.drawing_window.window_size[0] // 2, self.drawing_window.window_size[1] // 2), self ) # this will handle updating the drawing.
+        self.drawing_window._moveToNewPosition( (self.drawing_window.window_size[0] // 2, self.drawing_window.window_size[1] // 2), self, delay = force) # this will handle updating the drawing.
 
     # retrieve the turtle's currrent 'x' x-coordinate
     def getx(self):
@@ -344,7 +357,7 @@ class Turtle:
     heading = getheading # alias
 
     # move the turtle to a designated 'x'-'y' coordinate
-    def goto(self, x, y=None):
+    def goto(self, x, y=None, force = True):
         if isinstance(x, tuple) and y is None:
             if len(x) != 2:
                 raise ValueError('the tuple argument must be of length 2.')
@@ -360,7 +373,7 @@ class Turtle:
             raise ValueError('new y position must be a number.')
         if y < 0:
             raise ValueError('new y position must be non-negative.')
-        self.drawing_window._moveToNewPosition((x, y), self)
+        self.drawing_window._moveToNewPosition((x, y), self, delay = force)
 
     setpos = goto # alias
     setposition = goto # alias
@@ -368,14 +381,14 @@ class Turtle:
     # switch turtle visibility to ON
     def showturtle(self):
         self.is_turtle_visible = True
-        self.drawing_window._updateDrawing(self)
+        self.drawing_window._updateDrawing(turtle=self, delay=False)
 
     st = showturtle # alias
 
     # switch turtle visibility to OFF
     def hideturtle(self):
         self.is_turtle_visible = False
-        self.drawing_window._updateDrawing(self)
+        self.drawing_window._updateDrawing(turtle=self, delay=False)
 
     ht = hideturtle # alias
 
@@ -424,7 +437,7 @@ class Turtle:
             color = (color, c2, c3)
 
         self.pen_color = self._processColor(color)
-        self.drawing_window._updateDrawing()
+        self.drawing_window._updateDrawing(delay=False)
 
     pencolor = color
 
@@ -473,7 +486,7 @@ class Turtle:
     # clear any text or drawing on the screen
     def clear(self):
         self.svg_lines_string = ""
-        self.drawing_window._updateDrawing()
+        self.drawing_window._updateDrawing(delay=False)
 
     def write(self, obj, **kwargs):
         text = str(obj)
@@ -512,7 +525,7 @@ class Turtle:
         
         self.svg_lines_string += """<text x="{x}" y="{y}" fill="{fill_color}" text-anchor="{align}" style="{style}">{text}</text>""".format(x=self.turtle_pos[0], y=self.turtle_pos[1], text=text, fill_color=self.pen_color, align=align, style=style_string)
         
-        self.drawing_window._updateDrawing()
+        self.drawing_window._updateDrawing(delay=False)
 
     def shape(self, shape=None):
         if shape is None:
@@ -521,5 +534,5 @@ class Turtle:
             raise ValueError('shape is invalid. valid options are: ' + str(VALID_TURTLE_SHAPES))
         
         self.turtle_shape = shape
-        self.drawing_window._updateDrawing()
+        self.drawing_window._updateDrawing(delay=False)
 
