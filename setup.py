@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='ColabTurtleClass',
-    version='0.3.0',
+    version='0.3.1',
     packages=find_packages(include=['ColabTurtleClass']),
     license='MIT',
     author='Kevin Shen',

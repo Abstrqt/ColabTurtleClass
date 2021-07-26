@@ -474,7 +474,7 @@ class Turtle:
             raise ValueError('new x position must be non-negative')
         if not isinstance(y, (int,float)):
             raise ValueError('new y position must be a number.')
-        if not y < 0:
+        if y < 0:
             raise ValueError('new y position must be non-negative.')
 
         point = (x,y)
