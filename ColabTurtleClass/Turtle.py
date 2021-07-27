@@ -183,11 +183,14 @@ class Window:
 class Turtle:
     
     #Constructor
-    def __init__(self, window, speed : int = DEFAULT_SPEED, position : tuple = None):
+    def __init__(self, window, speed : int = DEFAULT_SPEED, position : tuple = None, name : str = None):
     
         if isinstance(speed,int) == False or speed not in range(1, 14):
             raise ValueError('initial_speed must be an integer in interval [1,13]')
         self.turtle_speed = speed
+        if isinstance(name, str) == False:
+            raise TypeError("Name must be of type string")
+        self.name = name
 
         self.is_turtle_visible = DEFAULT_TURTLE_VISIBILITY
         self.pen_color = DEFAULT_PEN_COLOR
@@ -209,6 +212,9 @@ class Turtle:
             self.turtle_pos = (window.window_size[0] // 2, window.window_size[1] // 2)            
         self.drawing_window = window
         window.add(self)
+
+    def __str__(self):
+        return self.name
 
     # makes the turtle move forward by 'units' units
     def forward(self, units, force = True):
