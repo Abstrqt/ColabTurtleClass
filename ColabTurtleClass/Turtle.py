@@ -188,7 +188,7 @@ class Turtle:
         if isinstance(speed,int) == False or speed not in range(1, 14):
             raise ValueError('initial_speed must be an integer in interval [1,13]')
         self.turtle_speed = speed
-        if isinstance(name, str) == False:
+        if isinstance(name, str) == False and name is not None:
             raise TypeError("Name must be of type string")
         self.name = name
 
